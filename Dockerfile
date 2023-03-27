@@ -10,9 +10,14 @@ LABEL maintainer="aptalca"
 # environment settings
 ARG DEBIAN_FRONTEND="noninteractive"
 ENV HOME="/config"
+# 需要和下面安装的golang对应
+ENV GOROOT="/usr/lib/go-1.18" 
+ENV PATH="${PATH}:${GOROOT}/bin"
+
 
 RUN \
   echo "**** install runtime dependencies ****" && \
+  sed -i 's/ports.ubuntu.com/repo.huaweicloud.com/g' /etc/apt/sources.list && \
   apt-get update && \
   apt-get install -y \
     git \

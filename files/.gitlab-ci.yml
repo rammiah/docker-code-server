@@ -1,0 +1,31 @@
+image: docker:20.10.16
+
+variables:
+  IMAGE: 172.16.16.172:12380/${CI_PROJECT_PATH}
+  VERSION: ${CI_COMMIT_BRANCH}-latest
+  TAG: ${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}
+
+before_script:
+  - docker info
+  - env
+
+stages:
+  - build
+  - push
+
+build-job:
+  stage: build
+  script:
+    - echo start building docker image
+    - docker build -t ${IMAGE}:${TAG} .
+    - echo build docker image success
+
+push-job:
+  stage: push
+  script:
+    - echo start push docker image to registry
+    - docker login http://172.16.16.172:12380 -u 'robot$gitlab-push' -p 51jRiHOrk7Zla0JRvqPLGkRqwbe2D2Aw
+    - docker tag ${IMAGE}:${TAG} ${IMAGE}:${VERSION}
+    - docker push ${IMAGE}:${TAG}
+    - docker push ${IMAGE}:${VERSION}
+    - echo push docker image success
