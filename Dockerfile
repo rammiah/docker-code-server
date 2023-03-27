@@ -17,7 +17,7 @@ ENV PATH="${PATH}:${GOROOT}/bin"
 
 RUN \
   echo "**** install runtime dependencies ****" && \
-  sed -i 's/ports.ubuntu.com/repo.huaweicloud.com/g' /etc/apt/sources.list && \
+  sed -i 's/archive.ubuntu.com/repo.huaweicloud.com/g' /etc/apt/sources.list && \
   apt-get update && \
   apt-get install -y \
     git \
@@ -26,13 +26,16 @@ RUN \
     nano \
     net-tools \
     netcat \
+    golang-1.18 \
     sudo && \
   echo "**** install code-server ****" && \
   if [ -z ${CODE_RELEASE+x} ]; then \
     CODE_RELEASE=$(curl -sX GET https://api.github.com/repos/coder/code-server/releases/latest \
       | awk '/tag_name/{print $4;exit}' FS='[""]' | sed 's|^v||'); \
   fi && \
-  mkdir -p /app/code-server && \
+  mkdir -p /app/code-server /usr/local/share/template/goservice && \
+  git config --global user.name "Administrator" && \
+  git config --global user.email "admin@example.com" && \
   curl -o \
     /tmp/code-server.tar.gz -L \
     "https://github.com/coder/code-server/releases/download/v${CODE_RELEASE}/code-server-${CODE_RELEASE}-linux-amd64.tar.gz" && \
@@ -46,8 +49,9 @@ RUN \
     /var/lib/apt/lists/* \
     /var/tmp/*
 
-# add local files
 COPY /root /
+ADD /init/ /etc/cont-init.d/
+ADD /files /usr/local/share/template/goservice
 
 # ports and volumes
 EXPOSE 8443
