@@ -13,7 +13,7 @@ ENV HOME="/config"
 # 需要和下面安装的golang对应
 ENV GOROOT="/usr/lib/go-1.18" 
 ENV PATH="${PATH}:${GOROOT}/bin"
-
+ENV GOPROXY=https://goproxy.cn,https://goproxy.io,direct
 
 RUN \
   echo "**** install runtime dependencies ****" && \
