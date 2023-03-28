@@ -1,9 +1,9 @@
 image: docker:20.10.16
 
 variables:
-  IMAGE: 172.16.16.172:12380/${CI_PROJECT_PATH}
-  VERSION: ${CI_COMMIT_BRANCH}-latest
-  TAG: ${CI_COMMIT_BRANCH}-${CI_COMMIT_SHORT_SHA}
+  IMAGE: 172.16.16.172:12380/serverless/${CI_PROJECT_PATH}
+  # VERSION: ${CI_COMMIT_BRANCH}-latest
+  TAG: ${CI_COMMIT_BRANCH}
 
 before_script:
   - docker info
@@ -25,7 +25,7 @@ push-job:
   script:
     - echo start push docker image to registry
     - docker login http://172.16.16.172:12380 -u 'robot$gitlab-push' -p 51jRiHOrk7Zla0JRvqPLGkRqwbe2D2Aw
-    - docker tag ${IMAGE}:${TAG} ${IMAGE}:${VERSION}
+    # - docker tag ${IMAGE}:${TAG} ${IMAGE}:${VERSION}
     - docker push ${IMAGE}:${TAG}
-    - docker push ${IMAGE}:${VERSION}
+    # - docker push ${IMAGE}:${VERSION}
     - echo push docker image success
